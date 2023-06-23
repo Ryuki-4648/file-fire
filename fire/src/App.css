@@ -17,3 +17,33 @@
 #file-upload-button {
   border: none;
 }
+
+.l-upload-box {
+  transition: all .3s;
+}
+.l-upload-box:hover {
+  opacity: .6;
+}
+.image02 {
+  animation: shake 4s ease infinite;
+}
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-10px);
+  }
+  40% {
+    transform: translateX(0);
+  }
+  60% {
+    transform: translateX(4px);
+  }
+  80% {
+    transform: translateX(-4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

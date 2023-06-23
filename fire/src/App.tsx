@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import { useDropzone } from "react-dropzone";
 
 function App() {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  // ファイルをドロップ → コンポーネントのonDropに定めたコールバックが呼び出される
+  const onDrop = useCallback((acceptedFiles: any) => {
+    console.log("acceptedFiles:", acceptedFiles); // Fileオブジェクト（Fileリスト）
+    console.log("acceptedFiles:", acceptedFiles[0].name);
+    if (acceptedFiles.length > 0) {
+      setUploadedFile(acceptedFiles[0]);
+    }
+  }, []);
+  // isDragActive: ファイルがドラッグされているかどうか判別する
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const resetFile = () => {
+    setUploadedFile(null);
+  };
   return (
     <div className="App relative flex h-screen items-center justify-center">
       <header className="l-header">
@@ -14,22 +29,53 @@ function App() {
           File Fire
         </h1>
         <div className="l-form-area">
+          <p className="mb-10 text-center tracking-wider">
+            忘れたい過去やファイルをお焚き上げ
+          </p>
           <div className="flex flex-wrap justify-center">
-            <div className="l-upload mb-24 h-32 w-32 border-2 border-dotted border-gray-400"></div>
-            <div className="mb-12 w-full">
-              <input
-                name="file"
-                type="file"
-                accept=""
-                className="c-button01 border-none"
-              />
-            </div>
-            <input
-              type="button"
-              disabled={true}
-              value="アップする"
-              className="c-button02 text-md h-12 w-36"
-            />
+            {uploadedFile ? (
+              <>
+                <img
+                  src="/img_file01.png"
+                  alt=""
+                  className="image02 absolute top-24 z-10 w-20"
+                />
+                <img
+                  src="/img_fire01.png"
+                  alt=""
+                  className="image01 z-1 absolute top-40 w-40"
+                />
+              </>
+            ) : (
+              <div
+                {...getRootProps()}
+                className="l-upload-box mb-12 flex h-44 w-44 cursor-pointer flex-wrap items-center justify-center border-2 border-dotted border-gray-400 p-4"
+              >
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p className="text-sm">ファイルをアップします</p>
+                ) : (
+                  <p className="text-center text-sm">
+                    ドロップ
+                    <br />
+                    または
+                    <br />
+                    クリックして選択
+                  </p>
+                )}
+              </div>
+            )}
+            {uploadedFile ? (
+              <p className="mb-6 w-full text-center">{uploadedFile.name}</p>
+            ) : (
+              <p></p>
+            )}
+            <p
+              className="absolute bottom-6 w-full cursor-pointer text-center text-sm text-blue-500 underline"
+              onClick={resetFile}
+            >
+              着火しなおす
+            </p>
           </div>
         </div>
       </section>
