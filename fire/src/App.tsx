@@ -46,9 +46,9 @@ function App() {
         <h1>File Fire</h1>
       </header>
       <img
-        src="/logo.png"
+        src="/img_title01.png"
         className="l-header__logo absolute -bottom-6 right-2 w-72 md:-bottom-10 md:right-4 md:w-1/3"
-        alt="logo"
+        alt="タイトル"
       />
       <section className="c-box01 absolute mx-auto h-2/3 w-4/5 rounded-md bg-white px-6 py-12 md:w-96">
         <div className="">

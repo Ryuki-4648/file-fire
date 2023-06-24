@@ -1,7 +1,7 @@
 /** @type {import("tailwindcss").Config} */
 module.exports = {
   mode: "jit", // JIT (just-in-time) mode を適用
-  darkMode: false, // "media" or "class"
+  darkMode: false,
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {},
