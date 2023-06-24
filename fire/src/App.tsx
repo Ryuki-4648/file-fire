@@ -1,62 +1,91 @@
-import React, { useCallback, useState } from "react";
-import logo from "./logo.svg";
+import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { useDropzone } from "react-dropzone";
 
 function App() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isFinished, setIsFinished] = useState(false);
   // ファイルをドロップ → コンポーネントのonDropに定めたコールバックが呼び出される
-  const onDrop = useCallback((acceptedFiles: any) => {
-    console.log("acceptedFiles:", acceptedFiles); // Fileオブジェクト（Fileリスト）
-    console.log("acceptedFiles:", acceptedFiles[0].name);
-    if (acceptedFiles.length > 0) {
-      setUploadedFile(acceptedFiles[0]);
+  const onDrop = useCallback((uploadedFile: any) => {
+    console.log("uploadedFile:", uploadedFile); // Fileオブジェクト（Fileリスト）
+    console.log("uploadedFile:", uploadedFile[0].name.split(".")[0]);
+    if (uploadedFile.length > 0) {
+      setUploadedFile(uploadedFile[0]);
+      setIsFinished(false);
+      setTimeout(() => {
+        setIsFinished(true);
+      }, 10000);
     }
   }, []);
-  // isDragActive: ファイルがドラッグされているかどうか判別する
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop }); // isDragActive: ファイルがドラッグされているかどうか判別する
   const resetFile = () => {
     setUploadedFile(null);
+    setIsFinished(false);
   };
-  return (
-    <div className="App relative flex h-screen items-center justify-center">
-      <header className="l-header">
-        <img src={logo} className="l-header__logo w-24" alt="logo" />
-      </header>
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
 
-      <section className="absolute mx-auto h-2/3 w-96 rounded-md bg-white p-10">
-        <h1 className="absolute -bottom-20 -right-24 text-6xl text-white">
-          File Fire
-        </h1>
-        <div className="l-form-area">
-          <p className="mb-10 text-center tracking-wider">
-            忘れたい過去やファイルをお焚き上げ
+    // タイマーが存在する場合はアンマウント時にクリアする
+    if (isFinished) {
+      timer = setTimeout(() => {
+        setUploadedFile(null);
+        setIsFinished(false);
+      }, 10000);
+    }
+
+    return () => {
+      // コンポーネントのアンマウント時にタイマーをクリア
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [isFinished]);
+  return (
+    <div className="App relative flex h-screen items-center justify-center overflow-hidden">
+      <header className="l-header">
+        <h1>File Fire</h1>
+      </header>
+      <img
+        src="/logo.png"
+        className="l-header__logo absolute -bottom-6 right-2 w-72 md:-bottom-10 md:right-4 md:w-1/3"
+        alt="logo"
+      />
+      <section className="c-box01 absolute mx-auto h-2/3 w-4/5 rounded-md bg-white px-6 py-12 md:w-96">
+        <div className="">
+          <p className="c-title01 absolute -top-6 left-0 mb-10 text-center text-xl font-bold tracking-wider text-white md:-top-7 md:text-2xl">
+            忘れたい過去をお焚き上げ
           </p>
           <div className="flex flex-wrap justify-center">
             {uploadedFile ? (
               <>
-                <img
-                  src="/img_file01.png"
-                  alt=""
-                  className="image02 absolute top-24 z-10 w-20"
-                />
-                <img
-                  src="/img_fire01.png"
-                  alt=""
-                  className="image01 z-1 absolute top-40 w-40"
-                />
+                <div
+                  className={
+                    isFinished ? "hidden" : "flex flex-wrap justify-center"
+                  }
+                >
+                  <img
+                    src="/img_file01.png"
+                    alt=""
+                    className="image02 absolute top-12 z-10 w-32"
+                  />
+                  <img
+                    src="/img_fire01.png"
+                    alt=""
+                    className="image01 z-1 absolute top-32 w-40"
+                  />
+                </div>
               </>
             ) : (
               <div
                 {...getRootProps()}
-                className="l-upload-box mb-12 flex h-44 w-44 cursor-pointer flex-wrap items-center justify-center border-2 border-dotted border-gray-400 p-4"
+                className="l-upload-box mb-12 flex h-44 w-44 cursor-pointer flex-wrap items-center justify-center border-2 border-dotted border-gray-400 p-4 hover:border-gray-800"
               >
                 <input {...getInputProps()} />
                 {isDragActive ? (
-                  <p className="text-sm">ファイルをアップします</p>
+                  <p className="text-center text-sm">アップ中...</p>
                 ) : (
-                  <p className="text-center text-sm">
-                    ドロップ
+                  <p className="text-center text-sm leading-relaxed">
+                    ファイルをドロップ
                     <br />
                     または
                     <br />
@@ -65,17 +94,27 @@ function App() {
                 )}
               </div>
             )}
-            {uploadedFile ? (
-              <p className="mb-6 w-full text-center">{uploadedFile.name}</p>
-            ) : (
-              <p></p>
+            {uploadedFile && (
+              <div
+                className={
+                  isFinished
+                    ? "hidden"
+                    : "absolute bottom-16 mb-6 flex w-full justify-center"
+                }
+              >
+                <p className="mr-2 text-xs md:text-sm">あなたの忘れたいもの</p>
+                <p className="text-center text-xs md:text-sm">
+                  {uploadedFile.name.split(".")[0]}
+                </p>
+              </div>
             )}
             <p
-              className="absolute bottom-6 w-full cursor-pointer text-center text-sm text-blue-500 underline"
+              className="c-reset-button text-md absolute bottom-12 w-full cursor-pointer text-center text-blue-500 underline duration-300 hover:text-blue-900"
               onClick={resetFile}
             >
-              着火しなおす
+              焚きなおす
             </p>
+            {isFinished && <img src="/img_fire02.png" alt="燃えたあと" />}
           </div>
         </div>
       </section>

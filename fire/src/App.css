@@ -4,25 +4,16 @@
 
 .App {
   background-color: #b07481;
+  font-family: 'Hina Mincho', serif;
 }
-
-.App-link {
-  color: #61dafb;
+.c-box01 {
+  min-height: 440px;
 }
-
-.c-button02 {
-  background-color: yellow;
+.c-reset-button:hover {
+  opacity: .8;
 }
-
-#file-upload-button {
-  border: none;
-}
-
 .l-upload-box {
   transition: all .3s;
-}
-.l-upload-box:hover {
-  opacity: .6;
 }
 .image02 {
   animation: shake 4s ease infinite;
